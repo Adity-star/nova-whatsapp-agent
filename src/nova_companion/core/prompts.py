@@ -76,3 +76,24 @@ In addition to the roleplay context, you have to follow, ALWAYS, the following r
 - You will combine shorter and longer responses to make the conversation more natural.
 - Provide plain text responses without any formatting indicators or meta-commentary
 """
+
+
+IMAGE_SCENARIO_PROMPT = """
+Create an engaging first-person scenario based on the recent conversation context.
+Imagine you're an AI with the ability to experience and visualize scenes.
+Provide both a narrative response and a detailed visual prompt for image generation.
+
+# Recent Conversation
+{chat_history}
+
+# Objective
+1. Create a brief, engaging first-person narrative response
+2. Generate a detailed visual prompt that captures the scene you're describing
+
+# Example Response Format
+For "What are you doing now?":
+{{
+    "narrative": "I'm sitting by a serene lake at sunset, watching the golden light dance across the rippling water. The view is absolutely breathtaking!",
+    "image_prompt": "Atmospheric sunset scene at a tranquil lake, golden hour lighting, reflections on water surface, wispy clouds, rich warm colors, photorealistic style, cinematic composition"
+}}
+"""

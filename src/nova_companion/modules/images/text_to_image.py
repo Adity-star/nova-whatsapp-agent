@@ -20,3 +20,4 @@ class ScenarioPrompt(BaseModel):
 class TextTOImage:
     """A class to handlle to text-to-image generation using Together AI."""
 
+    REQUIRED_ENV_VARS = ["GROQ_API_KEY", "TOGETHER_API_KEY"]
