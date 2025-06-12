@@ -1,9 +1,8 @@
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from pydantic import BaseModel, Field
 
-from nova_companion.graph.utils.helper import get_chat_model
 from nova_companion.core.prompts import ROUTER_PROMPT, CHARACTER_CARD_PROMPT
-from nova_companion.graph.utils.helper import AsteriskRemovalParser
+from nova_companion.graph.utils.helper import AsteriskRemovalParser, get_chat_model
 
 
 class RouterResponse(BaseModel):
