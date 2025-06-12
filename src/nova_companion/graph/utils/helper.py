@@ -21,3 +21,6 @@ def remove_asterisk_content(text: str) -> str:
 class AsteriskRemovalParser(StrOutputParser):
     def parse(self, text):
         return remove_asterisk_content(super().parse(text))
+    
+def get_text_to_image_module():
+    
