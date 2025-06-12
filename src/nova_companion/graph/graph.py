@@ -6,7 +6,8 @@ from nova_companion.graph.nodes import (
     router_node,
     context_injection_node,
     conversation_node,
-    image_node
+    image_node,
+    audio_node
 )
 
 from nova_companion.graph.state import AICompanionState
@@ -20,6 +21,7 @@ def create_workflow_graph():
     graph_builder.add_node("context_injection_node", context_injection_node)
     graph_builder.add_node("conversation_node", conversation_node)
     graph_builder.add_node("image_node",image_node)
+    graph_builder.add_node("audio_node", audio_node)
 
     return graph_builder
 
