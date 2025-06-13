@@ -1,9 +1,9 @@
 import os
 from typing import Optional
 
+from elevenlabs import ElevenLabs, Voice, VoiceSettings
 from nova_companion.core.exceptions import TextToSpeechError
 from nova_companion.settings import settings
-from elevenlabs import ElevenLabs, Voice, VoiceSettings
 
 
 class TextToSpeech:

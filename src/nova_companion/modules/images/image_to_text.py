@@ -3,9 +3,9 @@ import logging
 import os
 from typing import Optional, Union
 
+from groq import Groq
 from nova_companion.core.exceptions import ImageToTextError
 from nova_companion.settings import settings
-from groq import Groq
 
 
 class ImageToText:

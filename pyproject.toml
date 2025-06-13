@@ -1,5 +1,5 @@
 [project]
-name = "ai-companion"
+name = "nova_companion"
 version = "0.1.0"
 description = "Your own AI buddy"
 readme = "README.md"
@@ -34,3 +34,4 @@ line-length = 120
 [tool.ruff.lint]
 select = ["E", "F", "W", "Q", "I"]
 ignore = ["E501"]
+ 

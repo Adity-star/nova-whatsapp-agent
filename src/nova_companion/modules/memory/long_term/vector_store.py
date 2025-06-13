@@ -9,6 +9,7 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, PointStruct, VectorParams
 from sentence_transformers import SentenceTransformer
 
+
 @dataclass
 class Memory:
     """Represents a memory entry in the vector store."""
@@ -42,25 +43,25 @@ class VectorStore:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
-    
+
     def __init__(self) -> None:
         if not self._initialized:
             self._validate_env_vars()
             self.model = SentenceTransformer(self.EMBEDDING_MODEL)
             self.client = QdrantClient(url=settings.QDRANT_URL, api_key=settings.QDRANT_API_KEY)
             self._initialized = True
-    
+
     def _validate_env_vars(self) -> None:
         """Validate that all required environment variables are set."""
         missing_vars = [var for var in self.REQUIRED_ENV_VARS if not os.getenv(var)]
         if missing_vars:
             raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
-        
+
     def _collection_exists(self) -> bool:
         """Check if the memory collection exists."""
         collections = self.client.get_collections().collections
         return any(col.name == self.COLLECTION_NAME for col in collections)
-    
+
     def _create_collection(self) -> None:
         """Create a new collection for storing memories."""
         sample_embedding = self.model.encode("sample text")
@@ -85,7 +86,7 @@ class VectorStore:
         if results and results[0].score >= self.SIMILARITY_THRESHOLD:
             return results[0]
         return None
-    
+
     def store_memory(self, text: str, metadata: dict) -> None:
         """Store a new memory in the vector store or update if similar exists.
 

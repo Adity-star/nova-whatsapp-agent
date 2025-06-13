@@ -2,9 +2,9 @@ import os
 import tempfile
 from typing import Optional
 
+from groq import Groq
 from nova_companion.core.exceptions import SpeechToTextError
 from nova_companion.settings import settings
-from groq import Groq
 
 
 class SpeechToText:

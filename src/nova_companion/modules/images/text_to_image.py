@@ -1,17 +1,15 @@
 import base64
-import base64
 import logging
 import os
 from typing import Optional
 
-from nova_companion.settings import settings
 from langchain.prompts import PromptTemplate
 from langchain_groq import ChatGroq
+from nova_companion.core.exceptions import TextToImageError
+from nova_companion.core.prompts import IMAGE_ENHANCEMENT_PROMPT, IMAGE_SCENARIO_PROMPT
+from nova_companion.settings import settings
 from pydantic import BaseModel, Field
 from together import Together
-
-from nova_companion.core.prompts import IMAGE_SCENARIO_PROMPT, IMAGE_ENHANCEMENT_PROMPT
-from nova_companion.core.exceptions import TextToImageError
 
 
 class ScenarioPrompt(BaseModel):
@@ -29,7 +27,7 @@ class EnhancedPrompt(BaseModel):
         description="The enhanced text prompt to generate an image",
     )
 
-    
+
 class TextToImage:
     """A class to handlle to text-to-image generation using Together AI."""
 
@@ -43,15 +41,15 @@ class TextToImage:
     def validate_env_vars(self) -> None:
         missing_vars = [var for var in self.REQUIRED_ENV_VARS if not os.getenv(var)]
         if missing_vars:
-             raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
-        
+            raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
+
     @property
     def together_client(self) -> Together:
         """Get or create Together client instance using singleton pattern."""
         if self._together_client is None:
             self._together_client = Together(api_key=settings.TOGETHER_API_KEY)
         return self._together_client
-    
+
     async def generate_image(self, prompt: str, output_path: str = "") -> bytes:
         """Generate an image from a prompt using Together AI."""
         if not prompt.strip():
@@ -81,7 +79,7 @@ class TextToImage:
 
         except Exception as e:
             raise TextToImageError(f"Failed to generate image: {str(e)}") from e
-        
+
     async def create_scenario(self, chat_history: list = None) -> ScenarioPrompt:
         """Creates a first-person narrative scenario and corresponding image prompt based on chat history."""
         try:
@@ -113,7 +111,7 @@ class TextToImage:
 
         except Exception as e:
             raise TextToImageError(f"Failed to create scenario: {str(e)}") from e
-        
+
     async def enhance_prompt(self, prompt: str) -> str:
         """Enhance a simple prompt with additional details and context."""
         try:

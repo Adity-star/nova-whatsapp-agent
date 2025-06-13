@@ -1,17 +1,15 @@
 from datetime import datetime
 from typing import Dict, Optional
 
-
 from nova_companion.core.schedules import (
+    FRIDAY_SCHEDULE,
     MONDAY_SCHEDULE,
+    SATURDAY_SCHEDULE,
+    SUNDAY_SCHEDULE,
+    THURSDAY_SCHEDULE,
     TUESDAY_SCHEDULE,
     WEDNESDAY_SCHEDULE,
-    THURSDAY_SCHEDULE,
-    FRIDAY_SCHEDULE,
-    SATURDAY_SCHEDULE,
-    SUNDAY_SCHEDULE
 )
-
 
 
 class ScheduleContextGenerator:
@@ -64,7 +62,6 @@ class ScheduleContextGenerator:
 
         return None
 
-
     @classmethod
     def get_schedule_for_day(cls, day: int) -> Dict[str, str]:
         """Get the complete schedule for a specific day.
@@ -76,5 +73,3 @@ class ScheduleContextGenerator:
             Dict[str, str]: Schedule for the specified day
         """
         return cls.SCHEDULES.get(day, {})
-
-

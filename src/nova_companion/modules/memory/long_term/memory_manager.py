@@ -1,20 +1,14 @@
+import datetime
 import logging
 import uuid
-import datetime
 from typing import List, Optional
 
 from langchain_core.messages import BaseMessage
 from langchain_groq import ChatGroq
-from pydantic import BaseModel, Field
-from nova_companion.settings import settings
-
-from nova_companion.modules.memory.long_term.vector_store import get_vector_store
 from nova_companion.core.prompts import MEMORY_ANALYSIS_PROMPT
-
-from langchain_core.messages import BaseMessage
-from langchain_groq import ChatGroq
+from nova_companion.modules.memory.long_term.vector_store import get_vector_store
+from nova_companion.settings import settings
 from pydantic import BaseModel, Field
-
 
 
 class MemoryAnalysis(BaseModel):
@@ -25,6 +19,7 @@ class MemoryAnalysis(BaseModel):
         description="Whether the message is important enough to be stored as a memory",
     )
     formatted_memory: Optional[str] = Field(..., description="The formatted memory to be stored")
+
 
 class MemoryManager:
     """Manager class for handling long-term memory operations."""
@@ -39,12 +34,11 @@ class MemoryManager:
             max_retries=2,
         ).with_structured_output(MemoryAnalysis)
 
-    async def _analyse_memory(self, message:str) -> MemoryAnalysis:
-        
+    async def _analyse_memory(self, message: str) -> MemoryAnalysis:
         """Analyze a message to determine importance and format if needed."""
         prompt = MEMORY_ANALYSIS_PROMPT.format(message=message)
         return await self.llm.ainvoke(prompt)
-    
+
     async def extract_and_store_memories(self, message: BaseMessage) -> None:
         """Extract important information from a message and store in vector store."""
         if message.type != "human":
@@ -69,6 +63,7 @@ class MemoryManager:
                     "timestamp": datetime.now().isoformat(),
                 },
             )
+
     def get_relevant_memories(self, context: str) -> List[str]:
         """Retrieve relevant memories based on the current context."""
         memories = self.vector_store.search_memories(context, k=settings.MEMORY_TOP_K)
@@ -82,6 +77,7 @@ class MemoryManager:
         if not memories:
             return ""
         return "\n".join(f"- {memory}" for memory in memories)
+
 
 def get_memory_manager() -> MemoryManager:
     """Get a MemoryManager instance."""

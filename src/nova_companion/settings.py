@@ -2,13 +2,13 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env",extra="ignore",env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore", env_file_encoding="utf-8")
 
     GROQ_API_KEY: str
     TOGETHER_API_KEY: str
     ELEVENLABS_VOICE_ID: str
     ELEVENLABS_VOICE_ID: str
-    
+
     QDRANT_API_KEY: str | None
     QDRANT_URL: str
     QDRANT_PORT: str = "6333"
@@ -20,14 +20,13 @@ class Settings(BaseSettings):
     TTS_MODEL_NAME: str = "eleven_flash_v2_5"
     TTI_MODEL_NAME: str = "black-forest-labs/FLUX.1-schnell-Free"
     ITT_MODEL_NAME: str = "llama-3.2-90b-vision-preview"
-    
+
     ROUTER_MESSAGES_TO_ANALYZE: int = 3
     MEMORY_TOP_K: int = 3
     TOTAL_MESSAGES_SUMMARY_TRIGGER: int = 20
     TOTAL_MESSAGES_AFTER_SUMMARY: int = 5
 
     SHORT_TERM_MEMORY_DB_PATH: str = "/app/data/memory.db"
-
 
 
 settings = Settings()

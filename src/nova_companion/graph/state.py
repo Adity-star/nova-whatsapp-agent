@@ -22,4 +22,3 @@ class AICompanionState(MessagesState):
     current_activity: str
     apply_activity: bool
     memory_context: str
-    
