@@ -7,12 +7,11 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str
     TOGETHER_API_KEY: str
     ELEVENLABS_VOICE_ID: str
-    ELEVENLABS_VOICE_ID: str
 
     QDRANT_API_KEY: str | None
     QDRANT_URL: str
     QDRANT_PORT: str = "6333"
-    QDRANT_HOST: str | None = None
+    QDRANT_HOST: str
 
     TEXT_MODEL_NAME: str = "llama-3.3-70b-versatile"
     SMALL_TEXT_MODEL_NAME: str = "gemma2-9b-it"

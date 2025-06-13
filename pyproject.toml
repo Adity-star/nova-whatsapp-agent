@@ -1,5 +1,5 @@
 [project]
-name = "nova_companion"
+name = "nova-companion"
 version = "0.1.0"
 description = "Your own AI buddy"
 readme = "README.md"

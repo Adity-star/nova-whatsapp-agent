@@ -1,4 +1,7 @@
+from typing import Optional
+
 from langgraph.graph import MessagesState
+from pydantic import Field
 
 
 class AICompanionState(MessagesState):
@@ -15,10 +18,10 @@ class AICompanionState(MessagesState):
         memory_context (str): The context of the memories to be injected into the character card.
     """
 
-    summary: str
-    workflow: str
-    audio_buffer: bytes
-    image_path: str
-    current_activity: str
-    apply_activity: bool
-    memory_context: str
+    summary: str = Field(default="")
+    workflow: str = Field(default="conversation")
+    audio_buffer: Optional[bytes] = Field(default=None)
+    image_path: Optional[str] = Field(default=None)
+    current_activity: str = Field(default="")
+    apply_activity: bool = Field(default=False)
+    memory_context: str = Field(default="")
