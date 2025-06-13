@@ -8,6 +8,8 @@ from langchain_groq import ChatGroq
 from pydantic import BaseModel, Field
 from nova_companion.settings import settings
 
+from nova_companion.modules.memory.long_term.vector_store import get_vector_store
+
 
 
 
