@@ -8,6 +8,11 @@ class Settings(BaseSettings):
     TOGETHER_API_KEY: str
     ELEVENLABS_VOICE_ID: str
     ELEVENLABS_VOICE_ID: str
+    
+    QDRANT_API_KEY: str | None
+    QDRANT_URL: str
+    QDRANT_PORT: str = "6333"
+    QDRANT_HOST: str | None = None
 
     TEXT_MODEL_NAME: str = "llama-3.3-70b-versatile"
     SMALL_TEXT_MODEL_NAME: str = "gemma2-9b-it"
@@ -17,6 +22,11 @@ class Settings(BaseSettings):
     ITT_MODEL_NAME: str = "llama-3.2-90b-vision-preview"
     
     ROUTER_MESSAGES_TO_ANALYZE: int = 3
+    MEMORY_TOP_K: int = 3
+    TOTAL_MESSAGES_SUMMARY_TRIGGER: int = 20
+    TOTAL_MESSAGES_AFTER_SUMMARY: int = 5
+
+    SHORT_TERM_MEMORY_DB_PATH: str = "/app/data/memory.db"
 
 
 
