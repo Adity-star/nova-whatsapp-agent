@@ -1,5 +1,7 @@
+from typing import Optional
+
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from pydantic import BaseModel, Field
+from pydantic import AnyUrl, BaseModel, Field
 
 from nova_companion.core.prompts import CHARACTER_CARD_PROMPT, ROUTER_PROMPT
 from nova_companion.graph.utils.helper import AsteriskRemovalParser, get_chat_model
@@ -7,8 +9,9 @@ from nova_companion.graph.utils.helper import AsteriskRemovalParser, get_chat_mo
 
 class RouterResponse(BaseModel):
     response_type: str = Field(
-        description="The response type to give to the user. It must be one of: 'conversation', 'image' or 'audio'"
+        description="The response type to give to the user. One of: 'conversation', 'image', 'audio'."
     )
+    url: Optional[AnyUrl] = Field(default=None, description="Optional URL", example="https://example.com")
 
 
 def get_router_chain():
