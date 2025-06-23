@@ -1,11 +1,13 @@
 import base64
-import logging
 import os
 from typing import Optional, Union
 
 from groq import Groq
 from nova_companion.core.exceptions import ImageToTextError
 from nova_companion.settings import settings
+from utils.logger import logger
+
+logger.info("Loaded image_to_text.py")
 
 
 class ImageToText:
@@ -14,38 +16,26 @@ class ImageToText:
     REQUIRED_ENV_VARS = ["GROQ_API_KEY"]
 
     def __init__(self):
-        """Initialize the ImageToText class and validate environment variables."""
+        logger.info("Initializing ImageToText")
         self._validate_env_vars()
         self._client: Optional[Groq] = None
-        self.logger = logging.getLogger(__name__)
+        self.logger = logger
 
     def _validate_env_vars(self) -> None:
-        """Validate that all required environment variables are set."""
+        logger.info("Called _validate_env_vars")
         missing_vars = [var for var in self.REQUIRED_ENV_VARS if not os.getenv(var)]
         if missing_vars:
             raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
 
     @property
     def client(self) -> Groq:
-        """Get or create Groq client instance using singleton pattern."""
+        logger.info("Accessed client property")
         if self._client is None:
             self._client = Groq(api_key=settings.GROQ_API_KEY)
         return self._client
 
     async def analyze_image(self, image_data: Union[str, bytes], prompt: str = "") -> str:
-        """Analyze an image using Groq's vision capabilities.
-
-        Args:
-            image_data: Either a file path (str) or binary image data (bytes)
-            prompt: Optional prompt to guide the image analysis
-
-        Returns:
-            str: Description or analysis of the image
-
-        Raises:
-            ValueError: If the image data is empty or invalid
-            ImageToTextError: If the image analysis fails
-        """
+        logger.info(f"Called analyze_image with prompt: {prompt}")
         try:
             # Handle file path
             if isinstance(image_data, str):
