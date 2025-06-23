@@ -1,13 +1,23 @@
+from dataclasses import dataclass
 from io import BytesIO
 
 from langchain_core.messages import AIMessageChunk, HumanMessage
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 from nova_companion.graph.graph import create_workflow_graph
-from nova_companion.modules.images import ImageToText
-from nova_companion.modules.speech import SpeechToText, TextToSpeech
+from nova_companion.modules.images.image_to_text import ImageToText
+from nova_companion.modules.speech.speech_to_text import SpeechToText
+from nova_companion.modules.speech.text_to_speech import TextToSpeech
 from nova_companion.settings import settings
 
 import chainlit as cl
+
+
+@dataclass
+class AudioChunk:
+    data: bytes
+    isStart: bool
+    mimeType: str
+
 
 # Global module instances
 speech_to_text = SpeechToText()
@@ -85,7 +95,7 @@ async def on_message(message: cl.Message):
 
 
 @cl.on_audio_chunk
-async def on_audio_chunk(chunk: cl.AudioChunk):
+async def on_audio_chunk(chunk: AudioChunk):
     """Handle incoming audio chunks"""
     if chunk.isStart:
         buffer = BytesIO()

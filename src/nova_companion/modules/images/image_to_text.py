@@ -5,9 +5,9 @@ from typing import Optional, Union
 from groq import Groq
 from nova_companion.core.exceptions import ImageToTextError
 from nova_companion.settings import settings
-from utils.logger import logger
+from utils.logger import logging
 
-logger.info("Loaded image_to_text.py")
+logging.info("Loaded image_to_text.py")
 
 
 class ImageToText:
@@ -16,26 +16,26 @@ class ImageToText:
     REQUIRED_ENV_VARS = ["GROQ_API_KEY"]
 
     def __init__(self):
-        logger.info("Initializing ImageToText")
+        logging.info("Initializing ImageToText")
         self._validate_env_vars()
         self._client: Optional[Groq] = None
-        self.logger = logger
+        self.logger = logging
 
     def _validate_env_vars(self) -> None:
-        logger.info("Called _validate_env_vars")
+        logging.info("Called _validate_env_vars")
         missing_vars = [var for var in self.REQUIRED_ENV_VARS if not os.getenv(var)]
         if missing_vars:
             raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
 
     @property
     def client(self) -> Groq:
-        logger.info("Accessed client property")
+        logging.info("Accessed client property")
         if self._client is None:
             self._client = Groq(api_key=settings.GROQ_API_KEY)
         return self._client
 
     async def analyze_image(self, image_data: Union[str, bytes], prompt: str = "") -> str:
-        logger.info(f"Called analyze_image with prompt: {prompt}")
+        logging.info(f"Called analyze_image with prompt: {prompt}")
         try:
             # Handle file path
             if isinstance(image_data, str):
@@ -81,7 +81,7 @@ class ImageToText:
                 raise ImageToTextError("No response received from the vision model")
 
             description = response.choices[0].message.content
-            self.logger.info(f"Generated image description: {description}")
+            self.logging.info(f"Generated image description: {description}")
 
             return description
 

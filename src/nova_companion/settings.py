@@ -1,5 +1,7 @@
+import os
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from utils.logger import logger
+from utils.logger import logging
 
 
 class Settings(BaseSettings):
@@ -8,6 +10,7 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str
     TOGETHER_API_KEY: str
     ELEVENLABS_VOICE_ID: str
+    ELEVENLABS_API_KEY: str
 
     QDRANT_API_KEY: str | None
     QDRANT_URL: str
@@ -26,12 +29,14 @@ class Settings(BaseSettings):
     TOTAL_MESSAGES_SUMMARY_TRIGGER: int = 20
     TOTAL_MESSAGES_AFTER_SUMMARY: int = 5
 
-    SHORT_TERM_MEMORY_DB_PATH: str = "/app/data/memory.db"
+    SHORT_TERM_MEMORY_DB_PATH: str = "data/memory.db"
 
     def __init__(self, *args, **kwargs):
-        logger.info("Instantiating Settings")
+        logging.info("Instantiating Settings")
         super().__init__(*args, **kwargs)
+        # Ensure the directory for the database exists
+        os.makedirs(os.path.dirname(self.SHORT_TERM_MEMORY_DB_PATH), exist_ok=True)
 
 
 settings = Settings()
-logger.info("Settings instance created")
+logging.info("Settings instance created")
