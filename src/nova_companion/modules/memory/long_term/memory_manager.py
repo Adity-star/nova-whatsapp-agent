@@ -1,5 +1,4 @@
 import datetime
-import logging
 import uuid
 from typing import List, Optional
 
@@ -9,6 +8,9 @@ from nova_companion.core.prompts import MEMORY_ANALYSIS_PROMPT
 from nova_companion.modules.memory.long_term.vector_store import get_vector_store
 from nova_companion.settings import settings
 from pydantic import BaseModel, Field
+from utils.logger import logger
+
+logger.info("Loaded memory_manager.py")
 
 
 class MemoryAnalysis(BaseModel):
@@ -25,8 +27,9 @@ class MemoryManager:
     """Manager class for handling long-term memory operations."""
 
     def __init__(self):
+        logger.info("Initializing MemoryManager")
         self.vector_store = get_vector_store()
-        self.logger = logging.getLogger(__name__)
+        self.logger = logger
         self.llm = ChatGroq(
             model=settings.SMALL_TEXT_MODEL_NAME,
             api_key=settings.GROQ_API_KEY,
@@ -35,12 +38,12 @@ class MemoryManager:
         ).with_structured_output(MemoryAnalysis)
 
     async def _analyse_memory(self, message: str) -> MemoryAnalysis:
-        """Analyze a message to determine importance and format if needed."""
+        logger.info(f"Called _analyse_memory with message: {message}")
         prompt = MEMORY_ANALYSIS_PROMPT.format(message=message)
         return await self.llm.ainvoke(prompt)
 
     async def extract_and_store_memories(self, message: BaseMessage) -> None:
-        """Extract important information from a message and store in vector store."""
+        logger.info(f"Called extract_and_store_memories with message: {message}")
         if message.type != "human":
             return
 
@@ -65,7 +68,7 @@ class MemoryManager:
             )
 
     def get_relevant_memories(self, context: str) -> List[str]:
-        """Retrieve relevant memories based on the current context."""
+        logger.info(f"Called get_relevant_memories with context: {context}")
         memories = self.vector_store.search_memories(context, k=settings.MEMORY_TOP_K)
         if memories:
             for memory in memories:
@@ -73,12 +76,12 @@ class MemoryManager:
         return [memory.text for memory in memories]
 
     def format_memories_for_prompt(self, memories: List[str]) -> str:
-        """Format retrieved memories as bullet points."""
+        logger.info(f"Called format_memories_for_prompt with {len(memories)} memories")
         if not memories:
             return ""
         return "\n".join(f"- {memory}" for memory in memories)
 
 
 def get_memory_manager() -> MemoryManager:
-    """Get a MemoryManager instance."""
+    logger.info("Called get_memory_manager")
     return MemoryManager()

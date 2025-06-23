@@ -1,5 +1,4 @@
 import base64
-import logging
 import os
 from typing import Optional
 
@@ -10,6 +9,9 @@ from nova_companion.core.prompts import IMAGE_ENHANCEMENT_PROMPT, IMAGE_SCENARIO
 from nova_companion.settings import settings
 from pydantic import BaseModel, Field
 from together import Together
+from utils.logger import logger
+
+logger.info("Loaded text_to_image.py")
 
 
 class ScenarioPrompt(BaseModel):
@@ -34,24 +36,26 @@ class TextToImage:
     REQUIRED_ENV_VARS = ["GROQ_API_KEY", "TOGETHER_API_KEY"]
 
     def __init__(self):
+        logger.info("Initializing TextToImage")
         self.validate_env_vars()
         self._together_client: Optional[Together] = None
-        self.logger = logging.getLogger(__name__)
+        self.logger = logger
 
     def validate_env_vars(self) -> None:
+        logger.info("Called validate_env_vars")
         missing_vars = [var for var in self.REQUIRED_ENV_VARS if not os.getenv(var)]
         if missing_vars:
             raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
 
     @property
     def together_client(self) -> Together:
-        """Get or create Together client instance using singleton pattern."""
+        logger.info("Accessed together_client property")
         if self._together_client is None:
             self._together_client = Together(api_key=settings.TOGETHER_API_KEY)
         return self._together_client
 
     async def generate_image(self, prompt: str, output_path: str = "") -> bytes:
-        """Generate an image from a prompt using Together AI."""
+        logger.info(f"Called generate_image with prompt: {prompt} and output_path: {output_path}")
         if not prompt.strip():
             raise ValueError("Prompt cannot be empty")
 
@@ -81,7 +85,7 @@ class TextToImage:
             raise TextToImageError(f"Failed to generate image: {str(e)}") from e
 
     async def create_scenario(self, chat_history: list = None) -> ScenarioPrompt:
-        """Creates a first-person narrative scenario and corresponding image prompt based on chat history."""
+        logger.info("Called create_scenario")
         try:
             formatted_history = "\n".join([f"{msg.type.title()}: {msg.content}" for msg in chat_history[-5:]])
 
@@ -113,7 +117,7 @@ class TextToImage:
             raise TextToImageError(f"Failed to create scenario: {str(e)}") from e
 
     async def enhance_prompt(self, prompt: str) -> str:
-        """Enhance a simple prompt with additional details and context."""
+        logger.info(f"Called enhance_prompt with prompt: {prompt}")
         try:
             self.logger.info(f"Enhancing prompt: '{prompt}'")
 

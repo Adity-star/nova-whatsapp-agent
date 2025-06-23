@@ -2,7 +2,7 @@ from io import BytesIO
 
 from langchain_core.messages import AIMessageChunk, HumanMessage
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
-from nova_companion.graph import graph_builder
+from nova_companion.graph.graph import create_workflow_graph
 from nova_companion.modules.images import ImageToText
 from nova_companion.modules.speech import SpeechToText, TextToSpeech
 from nova_companion.settings import settings
@@ -14,6 +14,8 @@ speech_to_text = SpeechToText()
 
 text_to_speech = TextToSpeech()
 image_to_text = ImageToText()
+
+graph_builder = create_workflow_graph()
 
 
 @cl.on_chat_start

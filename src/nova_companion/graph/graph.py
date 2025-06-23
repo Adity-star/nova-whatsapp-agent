@@ -14,10 +14,14 @@ from nova_companion.graph.nodes import (
     summarize_conversation_node,
 )
 from nova_companion.graph.state import AICompanionState
+from src.utils.logger import logger
+
+logger.info("Loaded graph.py")
 
 
 @lru_cache(maxsize=1)
 def create_workflow_graph():
+    logger.info("Called create_workflow_graph")
     graph_builder = StateGraph(AICompanionState)
 
     graph_builder.add_node("router_node", router_node)
@@ -51,3 +55,4 @@ def create_workflow_graph():
 
 
 graph = create_workflow_graph().compile()
+logger.info("Graph compiled and ready")

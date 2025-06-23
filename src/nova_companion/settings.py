@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from utils.logger import logger
 
 
 class Settings(BaseSettings):
@@ -11,7 +12,7 @@ class Settings(BaseSettings):
     QDRANT_API_KEY: str | None
     QDRANT_URL: str
     QDRANT_PORT: str = "6333"
-    QDRANT_HOST: str
+    QDRANT_HOST: str | None = None
 
     TEXT_MODEL_NAME: str = "llama-3.3-70b-versatile"
     SMALL_TEXT_MODEL_NAME: str = "gemma2-9b-it"
@@ -27,5 +28,10 @@ class Settings(BaseSettings):
 
     SHORT_TERM_MEMORY_DB_PATH: str = "/app/data/memory.db"
 
+    def __init__(self, *args, **kwargs):
+        logger.info("Instantiating Settings")
+        super().__init__(*args, **kwargs)
+
 
 settings = Settings()
+logger.info("Settings instance created")

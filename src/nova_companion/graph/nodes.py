@@ -10,9 +10,13 @@ from nova_companion.graph.utils.helper import get_chat_model, get_text_to_image_
 from nova_companion.modules.memory.long_term.memory_manager import get_memory_manager
 from nova_companion.modules.schedules.context_generation import ScheduleContextGenerator
 from nova_companion.settings import settings
+from src.utils.logger import logger
+
+logger.info("Loaded nodes.py")
 
 
 async def router_node(state: AICompanionState):
+    logger.info(f"Called router_node with state: {state}")
     chain = get_router_chain()
     response = await chain.ainvoke({"message": state["messages"][-settings.ROUTER_MESSAGES_TO_ANALYZE :]})
 
@@ -20,6 +24,7 @@ async def router_node(state: AICompanionState):
 
 
 def context_injection_node(state: AICompanionState):
+    logger.info(f"Called context_injection_node with state: {state}")
     schedule_context = ScheduleContextGenerator.get_current_activity()
     if schedule_context != state.get("current_activity", ""):
         apply_activity = True
@@ -29,6 +34,7 @@ def context_injection_node(state: AICompanionState):
 
 
 async def conversation_node(state: AICompanionState, config: RunnableConfig):
+    logger.info(f"Called conversation_node with state: {state} and config: {config}")
     current_activity = ScheduleContextGenerator.get_current_activity()
     memory_context = state.get("memory_context", "")
 
@@ -46,6 +52,7 @@ async def conversation_node(state: AICompanionState, config: RunnableConfig):
 
 
 async def image_node(state: AICompanionState, config: RunnableConfig):
+    logger.info(f"Called image_node with state: {state} and config: {config}")
     current_activity = ScheduleContextGenerator.get_current_activity()
     memory_context = state.get("memory_context", "")
 
@@ -74,6 +81,7 @@ async def image_node(state: AICompanionState, config: RunnableConfig):
 
 
 async def audio_node(state: AICompanionState, config: RunnableConfig):
+    logger.info(f"Called audio_node with state: {state} and config: {config}")
     current_activity = ScheduleContextGenerator.get_current_activity()
     memory_context = state.get("memory_context", "")
 
@@ -94,6 +102,7 @@ async def audio_node(state: AICompanionState, config: RunnableConfig):
 
 
 async def summarize_conversation_node(state: AICompanionState):
+    logger.info(f"Called summarize_conversation_node with state: {state}")
     model = get_chat_model()
     summary = state.get("summary", "")
 
@@ -117,6 +126,7 @@ async def summarize_conversation_node(state: AICompanionState):
 
 
 async def memory_extraction_node(state: AICompanionState):
+    logger.info(f"Called memory_extraction_node with state: {state}")
     """Extract and store important information from the last message."""
     if not state["messages"]:
         return {}
@@ -127,6 +137,7 @@ async def memory_extraction_node(state: AICompanionState):
 
 
 def memory_injection_node(state: AICompanionState):
+    logger.info(f"Called memory_injection_node with state: {state}")
     """Retrieve and inject relevant memories into the character card."""
     memory_manager = get_memory_manager()
 
