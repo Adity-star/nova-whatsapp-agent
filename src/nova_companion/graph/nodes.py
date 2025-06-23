@@ -5,26 +5,33 @@ from langchain_core.messages import AIMessage, HumanMessage, RemoveMessage
 from langchain_core.runnables import RunnableConfig
 
 from nova_companion.graph.state import AICompanionState
-from nova_companion.graph.utils.chains import get_character_response_chain, get_router_chain
-from nova_companion.graph.utils.helper import get_chat_model, get_text_to_image_module, get_text_to_speech_module
+from nova_companion.graph.utils.chains import (
+    get_character_response_chain,
+    get_router_chain,
+)
+from nova_companion.graph.utils.helper import (
+    get_chat_model,
+    get_text_to_image_module,
+    get_text_to_speech_module,
+)
 from nova_companion.modules.memory.long_term.memory_manager import get_memory_manager
 from nova_companion.modules.schedules.context_generation import ScheduleContextGenerator
 from nova_companion.settings import settings
-from src.utils.logger import logger
-
-logger.info("Loaded nodes.py")
 
 
-async def router_node(state: AICompanionState):
-    logger.info(f"Called router_node with state: {state}")
+async def router_node(state):
+    # Fix: handle both dict and AICompanionState
+    if hasattr(state, "messages"):
+        messages = state.messages
+    else:
+        messages = state["messages"]
     chain = get_router_chain()
-    response = await chain.ainvoke({"message": state["messages"][-settings.ROUTER_MESSAGES_TO_ANALYZE :]})
-
+    recent_messages = messages[-settings.ROUTER_MESSAGES_TO_ANALYZE :]
+    response = await chain.ainvoke({"message": recent_messages})
     return {"workflow": response.response_type}
 
 
 def context_injection_node(state: AICompanionState):
-    logger.info(f"Called context_injection_node with state: {state}")
     schedule_context = ScheduleContextGenerator.get_current_activity()
     if schedule_context != state.get("current_activity", ""):
         apply_activity = True
@@ -34,7 +41,6 @@ def context_injection_node(state: AICompanionState):
 
 
 async def conversation_node(state: AICompanionState, config: RunnableConfig):
-    logger.info(f"Called conversation_node with state: {state} and config: {config}")
     current_activity = ScheduleContextGenerator.get_current_activity()
     memory_context = state.get("memory_context", "")
 
@@ -52,7 +58,6 @@ async def conversation_node(state: AICompanionState, config: RunnableConfig):
 
 
 async def image_node(state: AICompanionState, config: RunnableConfig):
-    logger.info(f"Called image_node with state: {state} and config: {config}")
     current_activity = ScheduleContextGenerator.get_current_activity()
     memory_context = state.get("memory_context", "")
 
@@ -65,7 +70,7 @@ async def image_node(state: AICompanionState, config: RunnableConfig):
     await text_to_image_module.generate_image(scenario.image_prompt, img_path)
 
     # Inject the image prompt information as an AI message
-    scenario_message = HumanMessage(content=f"<image attached by Nova generated from prompt: {scenario.image_prompt}>")
+    scenario_message = HumanMessage(content=f"<image attached by Ava generated from prompt: {scenario.image_prompt}>")
     updated_messages = state["messages"] + [scenario_message]
 
     response = await chain.ainvoke(
@@ -81,7 +86,6 @@ async def image_node(state: AICompanionState, config: RunnableConfig):
 
 
 async def audio_node(state: AICompanionState, config: RunnableConfig):
-    logger.info(f"Called audio_node with state: {state} and config: {config}")
     current_activity = ScheduleContextGenerator.get_current_activity()
     memory_context = state.get("memory_context", "")
 
@@ -102,20 +106,19 @@ async def audio_node(state: AICompanionState, config: RunnableConfig):
 
 
 async def summarize_conversation_node(state: AICompanionState):
-    logger.info(f"Called summarize_conversation_node with state: {state}")
     model = get_chat_model()
     summary = state.get("summary", "")
 
     if summary:
         summary_message = (
-            f"This is summary of the conversation to date between Nova and the user: {summary}\n\n"
+            f"This is summary of the conversation to date between Ava and the user: {summary}\n\n"
             "Extend the summary by taking into account the new messages above:"
         )
     else:
         summary_message = (
-            "Create a summary of the conversation above between Nova and the user. "
+            "Create a summary of the conversation above between Ava and the user. "
             "The summary must be a short description of the conversation so far, "
-            "but that captures all the relevant information shared between Nova and the user:"
+            "but that captures all the relevant information shared between Ava and the user:"
         )
 
     messages = state["messages"] + [HumanMessage(content=summary_message)]
@@ -126,7 +129,6 @@ async def summarize_conversation_node(state: AICompanionState):
 
 
 async def memory_extraction_node(state: AICompanionState):
-    logger.info(f"Called memory_extraction_node with state: {state}")
     """Extract and store important information from the last message."""
     if not state["messages"]:
         return {}
@@ -137,7 +139,6 @@ async def memory_extraction_node(state: AICompanionState):
 
 
 def memory_injection_node(state: AICompanionState):
-    logger.info(f"Called memory_injection_node with state: {state}")
     """Retrieve and inject relevant memories into the character card."""
     memory_manager = get_memory_manager()
 

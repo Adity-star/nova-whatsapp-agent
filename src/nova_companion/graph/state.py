@@ -1,10 +1,10 @@
-from typing import List, Optional
+from typing import Optional
 
-from langchain_core.messages import AnyMessage
-from pydantic import BaseModel, Field
+from langgraph.graph import MessagesState
+from pydantic import Field
 
 
-class AICompanionState(BaseModel):
+class AICompanionState(MessagesState):
     """State class for the AI Companion workflow.
 
     Extends MessagesState to track conversation history and maintains the last message received.
@@ -18,7 +18,6 @@ class AICompanionState(BaseModel):
         memory_context (str): The context of the memories to be injected into the character card.
     """
 
-    messages: List[AnyMessage] = Field(default_factory=list)
     summary: str = Field(default="")
     workflow: str = Field(default="conversation")
     audio_buffer: Optional[bytes] = Field(default=None)

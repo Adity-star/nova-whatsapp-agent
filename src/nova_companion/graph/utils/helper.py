@@ -6,13 +6,13 @@ from langchain_groq import ChatGroq
 from nova_companion.modules.images.image_to_text import ImageToText
 from nova_companion.modules.images.text_to_image import TextToImage
 from nova_companion.modules.speech.text_to_speech import TextToSpeech
-from nova_companion.settings import Settings
+from nova_companion.settings import settings
 
 
 def get_chat_model(temperature: float = 0.5):
     return ChatGroq(
-        api_key=Settings.GROQ_API_KEY,
-        model_name=Settings.TEXT_MODEL_NAME,
+        api_key=settings.GROQ_API_KEY,
+        model_name=settings.TEXT_MODEL_NAME,
         temperature=temperature,
     )
 
