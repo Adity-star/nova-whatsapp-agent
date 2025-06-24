@@ -5,7 +5,7 @@ FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 WORKDIR /app
 
 # Set environment variables (e.g., set Python to run in unbuffered mode)
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONUNBUFFERED 1
 
 # Install system dependencies for building libraries
 RUN apt-get update && apt-get install -y \
@@ -13,14 +13,21 @@ RUN apt-get update && apt-get install -y \
     g++ \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy the dependency management files (pyproject.toml and README.md)
-COPY pyproject.toml README.md /app/
+# Copy the dependency management files (lock file and pyproject.toml) first
+COPY uv.lock pyproject.toml README.md /app/
 
 # Install the application dependencies
-RUN uv pip install --system .
+RUN uv sync --frozen --no-cache
 
 # Copy your application code into the container
 COPY src/ /app/
+
+# Set the virtual environment environment variables
+ENV VIRTUAL_ENV=/app/.venv \
+    PATH="/app/.venv/bin:$PATH"
+
+# Install the package in editable mode
+RUN uv pip install -e .
 
 # Define volumes
 VOLUME ["/app/data"]
@@ -29,4 +36,4 @@ VOLUME ["/app/data"]
 EXPOSE 8000
 
 # Run the FastAPI app using uvicorn
-CMD ["chainlit", "run", "nova_companion/interfaces/chainlit/app.py", "--port", "8000", "--host", "0.0.0.0"]
+CMD ["chainlit", "run", "src/nova_companion/interfaces/chainlit/app.py", "--port", "8000", "--host", "0.0.0.0"]
