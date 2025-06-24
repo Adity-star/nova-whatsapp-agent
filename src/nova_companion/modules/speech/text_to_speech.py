@@ -1,7 +1,7 @@
 import os
 from typing import Optional
 
-from elevenlabs import ElevenLabs, Voice, VoiceSettings
+from elevenlabs import ElevenLabs
 from nova_companion.core.exceptions import TextToSpeechError
 from nova_companion.settings import settings
 
@@ -50,13 +50,12 @@ class TextToSpeech:
             raise ValueError("Input text exceeds maximum length of 5000 characters")
 
         try:
-            audio_generator = self.client.generate(
+            audio_generator = self.client.text_to_speech.convert(
                 text=text,
-                voice=Voice(
-                    voice_id=settings.ELEVENLABS_VOICE_ID,
-                    settings=VoiceSettings(stability=0.5, similarity_boost=0.5),
-                ),
-                model=settings.TTS_MODEL_NAME,
+                voice_id=settings.ELEVENLABS_VOICE_ID,
+                # settings=VoiceSettings(stability=0.5, similarity_boost=0.5),
+                model_id=settings.TTS_MODEL_NAME,
+                output_format="mp3_44100_128",
             )
 
             # Convert generator to bytes

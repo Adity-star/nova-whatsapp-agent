@@ -67,7 +67,6 @@ class TextToImage:
                 os.makedirs(os.path.dirname(output_path), exist_ok=True)
                 with open(output_path, "wb") as f:
                     f.write(image_data)
-                self.logging.info(f"Image saved to {output_path}")
 
             return image_data
 
@@ -96,7 +95,6 @@ class TextToImage:
             )
 
             scenario = chain.invoke({"chat_history": formatted_history})
-            self.logging.info(f"Created scenario: {scenario}")
 
             return scenario
 
@@ -123,7 +121,6 @@ class TextToImage:
             )
 
             enhanced_prompt = chain.invoke({"prompt": prompt}).content
-            self.logger.info(f"Enhanced prompt: '{enhanced_prompt}'")
 
             return enhanced_prompt
 
