@@ -17,7 +17,9 @@ class RouterResponse(BaseModel):
 def get_router_chain():
     model = get_chat_model(temperature=0.3).with_structured_output(RouterResponse)
 
-    prompt = ChatPromptTemplate.from_messages([("system", ROUTER_PROMPT), MessagesPlaceholder(variable_name="message")])
+    prompt = ChatPromptTemplate.from_messages(
+        [("system", ROUTER_PROMPT), MessagesPlaceholder(variable_name="messages")]
+    )
 
     return prompt | model
 
@@ -27,7 +29,7 @@ def get_character_response_chain(summary: str = ""):
     system_message = CHARACTER_CARD_PROMPT
 
     if summary:
-        system_message += f"\n\nSummary of conversation earlier between nova and the user: {summary}"
+        system_message += f"\n\nSummary of conversation earlier between Ava and the user: {summary}"
 
     prompt = ChatPromptTemplate.from_messages(
         [

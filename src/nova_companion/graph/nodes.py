@@ -19,15 +19,9 @@ from nova_companion.modules.schedules.context_generation import ScheduleContextG
 from nova_companion.settings import settings
 
 
-async def router_node(state):
-    # Fix: handle both dict and AICompanionState
-    if hasattr(state, "messages"):
-        messages = state.messages
-    else:
-        messages = state["messages"]
+async def router_node(state: AICompanionState):
     chain = get_router_chain()
-    recent_messages = messages[-settings.ROUTER_MESSAGES_TO_ANALYZE :]
-    response = await chain.ainvoke({"message": recent_messages})
+    response = await chain.ainvoke({"messages": state["messages"][-settings.ROUTER_MESSAGES_TO_ANALYZE :]})
     return {"workflow": response.response_type}
 
 
